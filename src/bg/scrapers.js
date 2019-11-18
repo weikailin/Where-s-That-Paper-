@@ -200,6 +200,7 @@ function acmScraper(tab, url){
 	if (url.indexOf('.pdf') == -1)
 		return;
 	
+	url = url.split('.pdf?')[0] + '.pdf';
 	var id = url.split('/')[5];
 	var pageUrl = 'http://dl.acm.org/exportformats.cfm?id=[ID]&expformat=bibtex';
 	pageUrl = pageUrl.replace('[ID]', id);
