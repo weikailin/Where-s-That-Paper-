@@ -13,7 +13,7 @@
   "background": {
     "scripts": [
       "js/jquery/jquery-3.4.1.min.js",
-      "src/bg/index.js",
+      "js/bibtexParser/index.js",
       "src/bg/scrapers.js",
       "src/bg/background.js"
     ],
