@@ -39,11 +39,7 @@ function HandleTab(tab){
 	console.log(url);
 
 	function onFulfilled(bookmarkItems){
-		if(bookmarkItems.length > 0){
-		  console.log("found in bookmarks");
-		}
-		else{
-		  console.log("not found in bookmarks");
+		if(bookmarkItems.length == 0){
 			try{
 				var host = getHost(url);
 				if (handlers[host] != null){
@@ -110,7 +106,6 @@ function getPapersFolderId(callback){
 	}
 
 	function onFulfilled(bookmarkItems){
-		console.log(bookmarkItems);
 		var found = false;
 		for (var i = 0; i < bookmarkItems.length; i++){
 			if (bookmarkItems[i].title == "Papers"){

@@ -133,7 +133,6 @@ function siamScraper(tab, url){
 	// WORKAROUND: SIAM doen't include "year" in bibtex,
 	// remove callback if it's fixed.
 	bibtexParser(url, pageUrl, {'callback': function(url, title, authors, year){
-		console.log([url, title, authors, year]);
 		if(year){
 			AddBookmarks(url, title, authors, year);
 		}
