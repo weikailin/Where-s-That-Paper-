@@ -61,23 +61,6 @@ function HandleTab(tab){
 	}
 	var searching = browser.bookmarks.search(url);
 	searching.then(onFulfilled, onRejected);
-
-	// chrome.bookmarks.search(url, function(results) {
-	// 	if (results.length == 0){
-	// 		try{
-	// 			var host = getHost(url);
-	// 			if (handlers[host] != null){
-	// 				handlers[host](tab, url);
-	// 			}
-	// 		}
-	// 		catch(err){
-	// 			console.log(err);
-	// 		}
-	// 	}
-	// 	else{
-	// 		var t = tab;
-	// 	}
-	// });
 }
 
 function getHost(url){
