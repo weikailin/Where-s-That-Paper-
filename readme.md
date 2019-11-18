@@ -1,4 +1,12 @@
-# Where's That Paper
+# Where's That Paper (Firefox)
+
+### Firefox Extension Installation
+
+1. Clone all files to a local folder
+1. Go to about:debugging#/runtime/this-firefox
+1. Click "Load Temporary Add-on..." and select "manifest.json" in the local folder
+
+(The following is forked from https://github.com/eylonyogev/Where-s-That-Paper-)
 
 ### Chrome Extension Installation
 
