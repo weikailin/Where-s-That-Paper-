@@ -14,6 +14,7 @@ browser.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
 });
 
 var handlers = {};
+browser.bookmarks.papersFolderId = '';
 init();
 
 function init(){
@@ -120,23 +121,29 @@ function getYearFolderId(year, callback){
 
 function getPapersFolderId(callback){
 	console.log('new');
+	if (browser.bookmarks.papersFolderId != ''){
+		callback(browser.bookmarks.papersFolderId);
+		return;
+	}
+
 	function onFulfilled(bookmarkItems){
+		console.log(bookmarkItems);
 		var found = false;
 		for (var i = 0; i < bookmarkItems.length; i++){
 			if (bookmarkItems[i].title == "Papers"){
 				found = true;
-				var id = bookmarkItems[0].id;
-				callback(id);
+				browser.bookmarks.papersFolderId = bookmarkItems[i].id;
+				callback(browser.bookmarks.papersFolderId);
 				break;
 			}
 		}
 		if (!found){
 			browser.bookmarks.create({
 				// 'parentId': '1',
-				// 'type': 'folder',
 				'title': 'Papers'}).then(function(newfolder){
+					browser.bookmarks.papersFolderId = newfolder.id;
 					console.log(newfolder);
-					callback(newfolder.id);
+					callback(browser.bookmarks.papersFolderId);
 			});
 		}
 	}
@@ -145,26 +152,6 @@ function getPapersFolderId(callback){
 	}
 	var searching = browser.bookmarks.search("Papers");
 	searching.then(onFulfilled, onRejected);
-
-	// function(results) {
-	// 	var found = false;
-	// 	for (var i = 0; i < results.length; i++){
-	// 		if (results[i].title == "Papers"){
-	// 			found = true;
-	// 			var id = results[0].id;
-	// 			callback(id);
-	// 		}
-	// 	}
-	// 	if (!found){
-	// 		chrome.bookmarks.create({
-	// 			'parentId': '1',
-	// 			'title': 'Papers'},
-	// 			function(newfolder){
-	// 				console.log(newfolder);
-	// 				callback(newfolder.id);
-	// 		});
-	// 	}
-	// });
 }
 
 
