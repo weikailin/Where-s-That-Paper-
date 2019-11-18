@@ -127,11 +127,25 @@ function siamScraper(tab, url){
 	if (url.indexOf('/pdf/') == -1)
 		return;
 	
-	var pageUrl = url.replace('/pdf/', '/abs/');
-	metaParser(url, pageUrl, {
-		'titleName': 'dc.Title',
-		'authorsName': 'dc.Creator',
-		'yearName': 'dc.Date'});
+	var id = url.split('/pdf/')[1];
+	var pageUrl = 'https://epubs.siam.org/action/downloadCitation?format=bibtex&doi=[ID]';
+	pageUrl = pageUrl.replace('[ID]', id);
+	// WORKAROUND: SIAM doen't include "year" in bibtex,
+	// remove callback if it's fixed.
+	bibtexParser(url, pageUrl, {'callback': function(url, title, authors, year){
+		console.log([url, title, authors, year]);
+		if(year){
+			AddBookmarks(url, title, authors, year);
+		}
+		else{
+			var pageUrl ='https://epubs.siam.org/action/showCitFormats?doi=[ID]';
+			pageUrl = pageUrl.replace('[ID]', id);
+ 			getDom(pageUrl, function(dom){
+				year = dom.querySelector('span.year').innerText;
+				AddBookmarks(url, title, authors, year);
+			});
+		}
+	}});
 }
 
 function msrScraper(tab, url){
