@@ -80,6 +80,11 @@ function metaParserSingleAuthor(url, pageUrl, delimiter, options){
 	metaParser(url, pageUrl, options);
 }
 
+function authorFirstLast(author){
+	// 'Last, First' to 'First Last'
+	return author.split(', ')[1] + ' ' + author.split(', ')[0];
+}
+
 function ePrintScraper(tab, url){
 	if (!url.endsWith('.pdf'))
 		return;
@@ -100,7 +105,12 @@ function arxivScraper(tab, url){
 		return;
 	
 	var pageUrl = url.replace('/pdf/','/abs/');
-	metaParser(url, pageUrl);
+	metaParser(url, pageUrl, {'callback': function(url, title, authors, year){
+		for(var i = 0; i < authors.length; i++){
+			authors[i] = authorFirstLast(authors[i]);
+		}
+		AddBookmarks(url, title, authors, year);
+	}});
 }
 
 function ecccScraper(tab, url){
