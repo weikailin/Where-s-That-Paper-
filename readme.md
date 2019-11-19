@@ -6,13 +6,14 @@
 1. Go to about:debugging#/runtime/this-firefox
 1. Click "Load Temporary Add-on..." and select "manifest.json" in the local folder
 
-(The following is forked from https://github.com/eylonyogev/Where-s-That-Paper-)
+The following is forked from https://github.com/eylonyogev/Where-s-That-Paper- by Eylon Yogev.
+Another Firefox fork https://github.com/vqhuy/Where-s-That-Paper- is made by Vu Quoc Huy.
 
 ### Chrome Extension Installation
 
 1. Go to chrome://extensions/
 1. Enable "Developer Mode".
-1. Click "Load unpacked extension…" and select the `build/browserExt` directory.
+1. Click "Load unpacked extensionâ€¦" and select the `build/browserExt` directory.
 
 # About
 
