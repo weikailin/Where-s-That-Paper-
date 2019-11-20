@@ -38,8 +38,8 @@ function HandleTab(tab){
 	var url = tab.url;
 	console.log(url);
 
-	function onFulfilled(bookmarkItems){
-		if(bookmarkItems.length == 0){
+	chrome.bookmarks.search(url, function (results){
+		if(results.length == 0){
 			try{
 				var host = getHost(url);
 				if (handlers[host] != null){
@@ -51,12 +51,7 @@ function HandleTab(tab){
 				console.log(err);
 			}
 		}
-	}
-	function onRejected(error){
-		console.log(error);
-	}
-	var searching = browser.bookmarks.search(url);
-	searching.then(onFulfilled, onRejected);
+	});
 }
 
 function getHost(url){
@@ -105,31 +100,26 @@ function getPapersFolderId(callback){
 		return;
 	}
 
-	function onFulfilled(bookmarkItems){
+	chrome.bookmarks.search("Papers", function(results){
 		var found = false;
-		for (var i = 0; i < bookmarkItems.length; i++){
-			if (bookmarkItems[i].title == "Papers"){
+		for (var i = 0; i < results.length; i++){
+			if (results[i].title == "Papers"){
 				found = true;
-				browser.bookmarks.papersFolderId = bookmarkItems[i].id;
+				browser.bookmarks.papersFolderId = results[i].id;
 				callback(browser.bookmarks.papersFolderId);
 				break;
 			}
 		}
 		if (!found){
-			browser.bookmarks.create({
+			chrome.bookmarks.create({
 				// 'parentId': '1',
-				'title': 'Papers'}).then(function(newfolder){
+				'title': 'Papers'}, function(newfolder){
 					browser.bookmarks.papersFolderId = newfolder.id;
 					console.log(newfolder);
 					callback(browser.bookmarks.papersFolderId);
 			});
 		}
-	}
-	function onRejected(error){
-		console.log(error);
-	}
-	var searching = browser.bookmarks.search("Papers");
-	searching.then(onFulfilled, onRejected);
+	});
 }
 
 
