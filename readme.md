@@ -4,8 +4,8 @@
 
 Because this extension is not signed by Mozilla, the following installation 
 may only work on development versions of Firefox (say, Beta or Nightly).
-1. Download the [wheresthatpaper.xpi file in the xpi branch]
-(blob/xpi/wheresthatpaper.xpi)
+1. Download the wheresthatpaper.xpi file in the xpi branch
+(https://github.com/weikailin/Where-s-That-Paper-/blob/xpi/wheresthatpaper.xpi)
 1. Go to "about:config" and set "xpinstall.signatures.required" to "false"
 1. Go to "Add-ons", "Extensions", "Manage Your Extensions" section, 
 click the gear (:gear:) button, and "Install Add-On From File"
