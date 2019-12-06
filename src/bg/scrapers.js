@@ -1,7 +1,22 @@
 
 function bibtexParser(url, pageUrl, options={}){
 	getUrl(pageUrl, function(req){
-		bibtexParserString(url, req.responseText, options);
+		bibentry = req.responseText;
+		console.log(bibentry);
+		months = '@STRING{ jan = "January" }\
+@STRING{ feb = "February" }\
+@STRING{ mar = "March" }\
+@STRING{ apr = "April" }\
+@STRING{ may = "May" }\
+@STRING{ jun = "June" }\
+@STRING{ jul = "July" }\
+@STRING{ aug = "August" }\
+@STRING{ sep = "September" }\
+@STRING{ oct = "October" }\
+@STRING{ nov = "November" }\
+@STRING{ dec = "December" }';
+		bibentry = months + bibentry;
+		bibtexParserString(url, bibentry, options);
 	});
 }
 
