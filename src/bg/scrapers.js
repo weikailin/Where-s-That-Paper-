@@ -1,9 +1,8 @@
 
 function bibtexParser(url, pageUrl, options={}){
 	getUrl(pageUrl, function(req){
-		bibentry = req.responseText;
-		console.log(bibentry);
-		months = '@STRING{ jan = "January" }\
+		var bibentry = req.responseText;
+		var months = '@STRING{ jan = "January" }\
 @STRING{ feb = "February" }\
 @STRING{ mar = "March" }\
 @STRING{ apr = "April" }\
@@ -14,7 +13,8 @@ function bibtexParser(url, pageUrl, options={}){
 @STRING{ sep = "September" }\
 @STRING{ oct = "October" }\
 @STRING{ nov = "November" }\
-@STRING{ dec = "December" }';
+@STRING{ dec = "December" }\
+';
 		bibentry = months + bibentry;
 		bibtexParserString(url, bibentry, options);
 	});
@@ -227,6 +227,8 @@ function acmScraper(tab, url){
 	
 	var id = url.split('/')[5];
 	var pageUrl = 'http://dl.acm.org/exportformats.cfm?id=[ID]&expformat=bibtex';
+	// this URL actually contains some HTML tags (ignored by bibtex-js)
+	// JACM bibtex uses 'month = jan' which needs refs of jan, feb, ...
 	pageUrl = pageUrl.replace('[ID]', id);
 	// ACM uses session tokens to PDF, bookmark this page instead
 	bibtexParser('https://dl.acm.org/citation.cfm?id=' + id, pageUrl);
