@@ -203,10 +203,18 @@ function sciencedirectScraper(tab, url){
 	if (url.indexOf('main.pdf') == -1)
 		return;
 	//console.log('science');
-	var id = url.split('/')[3];
-	var pageUrl = 'http://www.sciencedirect.com/sdfe/export/[ID]/format?export-format=BIBTEX&export-content=cite';
+	var id = url.split('/')[6];
+	var pageUrl = 'https://www.sciencedirect.com/sdfe/arp/cite?pii=[ID]&format=text/x-bibtex&withabstract=false';
 	pageUrl = pageUrl.replace('[ID]', id);
+	url = 'https://www.sciencedirect.com/science/article/pii/' + id;
 	bibtexParser(url, pageUrl);
+}
+
+function elsevierScraper(tab, url){
+	// [DIRTY] chopping "reader.elsevier.com/....?token="
+	// [DIRTY] and circumvent "main.pdf" checking 
+	url = url.replace('?', '/main.pdf');
+	sciencedirectScraper(tab, url);
 }
 
 function springerScraper(tab, url){
