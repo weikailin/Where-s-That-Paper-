@@ -50,6 +50,13 @@ function bibtexParserString(url, bibtexString, options={}){
 	options['callback'](url, title, authors, year);
 }
 
+function metaGetter(dom, metaNames){
+	var ret = [];
+	for (var i = 0; i < metaNames.length; i++){
+		ret.push(getElementByName(dom, 'meta', metaNames[i]));
+	}
+	return ret;
+}
 
 function metaParser(url, pageUrl, options={}){
 	if (options == null)
@@ -66,15 +73,18 @@ function metaParser(url, pageUrl, options={}){
 		options['callback'] = AddBookmarks;
 	
 	getDom(pageUrl, function(dom){
-		var title = getElementByName(dom, 'meta', options['titleName'])[0].content;
-		var authorsHtml = getElementByName(dom, 'meta', options['authorsName']);
+		var metaTags = metaGetter(dom, [
+			options['titleName'], options['authorsName'], options['yearName']
+		]);
+		var title = metaTags[0][0].content;
+		var authorsHtml = metaTags[1];
 		var authors = [];
 		for (var i = 0; i < authorsHtml.length; i++){
 			if (!authors.includes(authorsHtml[i]))
 				authors.push(authorsHtml[i].content);
 		}
 		
-		var year = getElementByName(dom, 'meta', options['yearName'])[0].content.substr(0,4);
+		var year = metaTags[2][0].content.substr(0,4);
 		
 		options['callback'](url, title, authors, year);
 	});
@@ -237,16 +247,16 @@ function acmScraper(tab, url){
 	
 	var id = url.split('/')[5];
 	var pageUrl = 'https://dl.acm.org/citation.cfm?id=' + id;
-	// [DIRTY] to cleanup with metaParser()
 	getDom(pageUrl, function(dom){
-		var title = getElementByName(dom, 'meta', 'citation_title')[0].content;
-		var authorsHtml = getElementByName(dom, 'meta', 'citation_authors')[0].content;
+		var metaTags = metaGetter(dom, ['citation_title', 'citation_authors', 'citation_date', 'citation_pdf_url']);
+		var title = metaTags[0][0].content;
+		var authorsHtml = metaTags[1][0].content;
 		var authors = authorsHtml.split('; ');
 		for(var i = 0; i < authors.length; i++){
 			authors[i] = authorFirstLast(authors[i]);
 		}
-		var year = getElementByName(dom, 'meta', 'citation_date')[0].content.split('/')[2];
-		url = getElementByName(dom, 'meta', 'citation_pdf_url')[0].content;
+		var year = metaTags[2][0].content.split('/')[2];
+		url = metaTags[3][0].content;
 		AddBookmarks(url, title, authors, year);
 	});
 }
