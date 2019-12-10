@@ -204,6 +204,8 @@ function sciencedirectScraper(tab, url){
 		return;
 	//console.log('science');
 	var id = url.split('/')[6];
+	// [TODO] sciencedirect pages have a meta tag "citation_pdf_url" 
+	// (but no author tag)
 	var pageUrl = 'https://www.sciencedirect.com/sdfe/arp/cite?pii=[ID]&format=text/x-bibtex&withabstract=false';
 	pageUrl = pageUrl.replace('[ID]', id);
 	url = 'https://www.sciencedirect.com/science/article/pii/' + id;
@@ -234,12 +236,19 @@ function acmScraper(tab, url){
 		return;
 	
 	var id = url.split('/')[5];
-	var pageUrl = 'http://dl.acm.org/exportformats.cfm?id=[ID]&expformat=bibtex';
-	// this URL actually contains some HTML tags (ignored by bibtex-js)
-	// JACM bibtex uses 'month = jan' which needs refs of jan, feb, ...
-	pageUrl = pageUrl.replace('[ID]', id);
-	// ACM uses session tokens to PDF, bookmark this page instead
-	bibtexParser('https://dl.acm.org/citation.cfm?id=' + id, pageUrl);
+	var pageUrl = 'https://dl.acm.org/citation.cfm?id=' + id;
+	// [DIRTY] to cleanup with metaParser()
+	getDom(pageUrl, function(dom){
+		var title = getElementByName(dom, 'meta', 'citation_title')[0].content;
+		var authorsHtml = getElementByName(dom, 'meta', 'citation_authors')[0].content;
+		var authors = authorsHtml.split('; ');
+		for(var i = 0; i < authors.length; i++){
+			authors[i] = authorFirstLast(authors[i]);
+		}
+		var year = getElementByName(dom, 'meta', 'citation_date')[0].content.split('/')[2];
+		url = getElementByName(dom, 'meta', 'citation_pdf_url')[0].content;
+		AddBookmarks(url, title, authors, year);
+	});
 }
 
 function mlrScraper(tab, url){
@@ -248,6 +257,7 @@ function mlrScraper(tab, url){
 	
 	var pageUrl = url.replace('.pdf', '.html');
 	getUrl(pageUrl, function(req){
+		// [DIRTY] to cleanup with getDom()
 		var parser = new DOMParser ();
 		var responseDoc = parser.parseFromString (req.responseText, "text/html");
 		var bibtexString = responseDoc.getElementById('bibtex').innerHTML;
@@ -282,8 +292,7 @@ function getUrl(url, callback){
 
 function getDom(pageUrl, callback){
 	getUrl(pageUrl, function(req){
-		var dom = document.createElement( 'html' );
-		dom.innerHTML = req.responseText;
+		var dom = new DOMParser().parseFromString(req.responseText, 'text/html');
 		callback(dom);
 	});
 }
