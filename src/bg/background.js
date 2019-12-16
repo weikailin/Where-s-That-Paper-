@@ -26,6 +26,9 @@ function init(){
 	handlers['citeseerx.ist.psu.edu'] = citeseerxScraper;
 	handlers['ac.els-cdn.com'] = sciencedirectScraper;
 	handlers['www.sciencedirect.com'] = sciencedirectScraper;
+	handlers['pdf.sciencedirect.com'] = sciencedirectScraper;
+	handlers['pdf.sciencedirectassets.com'] = sciencedirectScraper;
+	handlers['reader.elsevier.com'] = elsevierScraper;
 	handlers['download.springer.com'] = springerScraper;
 	handlers['link.springer.com'] = springerScraper;
 	handlers['delivery.acm.org'] = acmScraper;

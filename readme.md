@@ -2,11 +2,24 @@
 
 ### Firefox Extension Installation
 
+Because this extension is not signed by Mozilla, the following installation 
+may only work on development versions of Firefox (say, Beta or Nightly).
+1. Download the [wheresthatpaper.xpi](https://github.com/weikailin/Where-s-That-Paper-/blob/xpi/wheresthatpaper.xpi) file in the xpi branch
+1. Go to "about:config" and set "xpinstall.signatures.required" to "false"
+1. Go to "Add-ons", "Extensions", "Manage Your Extensions" section, 
+click the gear (:gear:) button, and "Install Add-On From File"
+1. Open the downloaded file wheresthatpaper.xpi
+
+To try this extension, the following is a temporary way to install, 
+but it does not persist after restarting Firefox.
 1. Clone all files to a local folder
 1. Go to about:debugging#/runtime/this-firefox
 1. Click "Load Temporary Add-on..." and select "manifest.json" in the local folder
 
-The following is forked from https://github.com/eylonyogev/Where-s-That-Paper- by Eylon Yogev.
+
+# Forked from Eylon Yogev
+
+This extension is forked from https://github.com/eylonyogev/Where-s-That-Paper- by Eylon Yogev.
 Another Firefox fork https://github.com/vqhuy/Where-s-That-Paper- is made by Vu Quoc Huy.
 
 ### Chrome Extension Installation

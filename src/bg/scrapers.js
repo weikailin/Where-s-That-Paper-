@@ -50,6 +50,13 @@ function bibtexParserString(url, bibtexString, options={}){
 	options['callback'](url, title, authors, year);
 }
 
+function metaGetter(dom, metaNames){
+	var ret = [];
+	for (var i = 0; i < metaNames.length; i++){
+		ret.push(getElementByName(dom, 'meta', metaNames[i]));
+	}
+	return ret;
+}
 
 function metaParser(url, pageUrl, options={}){
 	if (options == null)
@@ -66,15 +73,18 @@ function metaParser(url, pageUrl, options={}){
 		options['callback'] = AddBookmarks;
 	
 	getDom(pageUrl, function(dom){
-		var title = getElementByName(dom, 'meta', options['titleName'])[0].content;
-		var authorsHtml = getElementByName(dom, 'meta', options['authorsName']);
+		var metaTags = metaGetter(dom, [
+			options['titleName'], options['authorsName'], options['yearName']
+		]);
+		var title = metaTags[0][0].content;
+		var authorsHtml = metaTags[1];
 		var authors = [];
 		for (var i = 0; i < authorsHtml.length; i++){
 			if (!authors.includes(authorsHtml[i]))
 				authors.push(authorsHtml[i].content);
 		}
 		
-		var year = getElementByName(dom, 'meta', options['yearName'])[0].content.substr(0,4);
+		var year = metaTags[2][0].content.substr(0,4);
 		
 		options['callback'](url, title, authors, year);
 	});
@@ -203,10 +213,28 @@ function sciencedirectScraper(tab, url){
 	if (url.indexOf('main.pdf') == -1)
 		return;
 	//console.log('science');
-	var id = url.split('/')[3];
-	var pageUrl = 'http://www.sciencedirect.com/sdfe/export/[ID]/format?export-format=BIBTEX&export-content=cite';
+	var id = '';
+	if (url.indexOf('sciencedirectassets.com') == -1){
+		id = url.split('/')[6];
+	}
+	else{
+		var i = url.indexOf('pii=') + 4;
+		var j = url.indexOf('&', i);
+		id = url.substr(i,j-i);
+	}
+	// [TODO] sciencedirect pages have a meta tag "citation_pdf_url" 
+	// (but no author tag)
+	var pageUrl = 'https://www.sciencedirect.com/sdfe/arp/cite?pii=[ID]&format=text/x-bibtex&withabstract=false';
 	pageUrl = pageUrl.replace('[ID]', id);
+	url = 'https://www.sciencedirect.com/science/article/pii/' + id;
 	bibtexParser(url, pageUrl);
+}
+
+function elsevierScraper(tab, url){
+	// [DIRTY] chopping "reader.elsevier.com/....?token="
+	// [DIRTY] and circumvent "main.pdf" checking 
+	url = url.replace('?', '/main.pdf');
+	sciencedirectScraper(tab, url);
 }
 
 function springerScraper(tab, url){
@@ -226,12 +254,19 @@ function acmScraper(tab, url){
 		return;
 	
 	var id = url.split('/')[5];
-	var pageUrl = 'http://dl.acm.org/exportformats.cfm?id=[ID]&expformat=bibtex';
-	// this URL actually contains some HTML tags (ignored by bibtex-js)
-	// JACM bibtex uses 'month = jan' which needs refs of jan, feb, ...
-	pageUrl = pageUrl.replace('[ID]', id);
-	// ACM uses session tokens to PDF, bookmark this page instead
-	bibtexParser('https://dl.acm.org/citation.cfm?id=' + id, pageUrl);
+	var pageUrl = 'https://dl.acm.org/citation.cfm?id=' + id;
+	getDom(pageUrl, function(dom){
+		var metaTags = metaGetter(dom, ['citation_title', 'citation_authors', 'citation_date', 'citation_pdf_url']);
+		var title = metaTags[0][0].content;
+		var authorsHtml = metaTags[1][0].content;
+		var authors = authorsHtml.split('; ');
+		for(var i = 0; i < authors.length; i++){
+			authors[i] = authorFirstLast(authors[i]);
+		}
+		var year = metaTags[2][0].content.split('/')[2];
+		url = metaTags[3][0].content;
+		AddBookmarks(url, title, authors, year);
+	});
 }
 
 function mlrScraper(tab, url){
@@ -240,6 +275,7 @@ function mlrScraper(tab, url){
 	
 	var pageUrl = url.replace('.pdf', '.html');
 	getUrl(pageUrl, function(req){
+		// [DIRTY] to cleanup with getDom()
 		var parser = new DOMParser ();
 		var responseDoc = parser.parseFromString (req.responseText, "text/html");
 		var bibtexString = responseDoc.getElementById('bibtex').innerHTML;
@@ -274,8 +310,7 @@ function getUrl(url, callback){
 
 function getDom(pageUrl, callback){
 	getUrl(pageUrl, function(req){
-		var dom = document.createElement( 'html' );
-		dom.innerHTML = req.responseText;
+		var dom = new DOMParser().parseFromString(req.responseText, 'text/html');
 		callback(dom);
 	});
 }
