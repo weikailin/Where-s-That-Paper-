@@ -213,7 +213,15 @@ function sciencedirectScraper(tab, url){
 	if (url.indexOf('main.pdf') == -1)
 		return;
 	//console.log('science');
-	var id = url.split('/')[6];
+	var id = '';
+	if (url.indexOf('sciencedirectassets.com') == -1){
+		id = url.split('/')[6];
+	}
+	else{
+		var i = url.indexOf('pii=') + 4;
+		var j = url.indexOf('&', i);
+		id = url.substr(i,j-i);
+	}
 	// [TODO] sciencedirect pages have a meta tag "citation_pdf_url" 
 	// (but no author tag)
 	var pageUrl = 'https://www.sciencedirect.com/sdfe/arp/cite?pii=[ID]&format=text/x-bibtex&withabstract=false';
