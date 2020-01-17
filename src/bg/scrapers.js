@@ -292,6 +292,19 @@ function apsScraper(tab, url){
 	bibtexParser(url, pageUrl);
 }
 
+function dropsScraper(tab, url){
+	if (url.indexOf('/pdf/') == -1)
+		return;
+
+	var pageUrl = url.substr(0, url.indexOf('/pdf/') + 1);
+	metaParser(url, pageUrl, {'callback': function(url, title, authors, year){
+		for(var i = 0; i < authors.length; i++){
+			authors[i] = authorFirstLast(authors[i]);
+		}
+		AddBookmarks(url, title, authors, year);
+	}});
+}
+
 
 //////////////////////////////////////////////////////
 
