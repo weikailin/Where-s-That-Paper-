@@ -138,6 +138,22 @@ function arxivScraper(tab, url){
 	}});
 }
 
+function coreScraper(tab, url){
+	if (!url.endsWith('.pdf'))
+		return;
+	var id = getLastPart(url, '/');
+	id = getPartFromEnd(id, '.', 1);
+	var pageUrl = 'https://core.ac.uk/display/' + id;
+	metaParser(url, pageUrl, {
+		'yearName': 'citation_publication_date',
+		'callback': function(url, title, authors, year){
+			for(var i = 0; i < authors.length; i++){
+				authors[i] = authorFirstLast(authors[i]);
+			}
+			AddBookmarks(url, title, authors, year);
+	}});
+}
+
 function ecccScraper(tab, url){
 	if (url.indexOf('/report/') == -1)
 		return;

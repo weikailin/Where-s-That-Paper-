@@ -35,6 +35,7 @@ function init(){
 	handlers['proceedings.mlr.press'] = mlrScraper;
 	handlers['journals.aps.org'] = apsScraper;
 	handlers['drops.dagstuhl.de'] = dropsScraper;
+	handlers['core.ac.uk'] = coreScraper;
 }
 
 
