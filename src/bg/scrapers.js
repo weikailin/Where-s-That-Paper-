@@ -90,21 +90,6 @@ function metaParser(url, pageUrl, options={}){
 	});
 }
 
-function metaParserSingleAuthor(url, pageUrl, delimiter, options){
-	if (options == null)
-		options = {};
-	var theirCallback = options['callback'];
-	if (theirCallback == null)
-		theirCallback = AddBookmarks;
-	
-	options['callback'] = function(url, title, authors, year){
-		var authors = authors.split(delimiter);
-		callback(url, title, authors, year);
-	}
-	
-	metaParser(url, pageUrl, options);
-}
-
 function authorFirstLast(author){
 	// 'Last, First' to 'First Last'
 	return author.split(', ')[1] + ' ' + author.split(', ')[0];
@@ -222,7 +207,14 @@ function citeseerxScraper(tab, url){
 	var id = url.substr(i,j-i);
 	var pageUrl = 'http://citeseerx.ist.psu.edu/viewdoc/summary?doi=' + id;
 	
-	metaParserSingleAuthor(url, pageUrl, {'yearName': 'citation_year'});
+	metaParser(url, pageUrl, {
+		'yearName': 'citation_year', 
+		'authorsName': 'citation_authors',
+		'callback': function(url, title, authors, year){
+			var authors = authors[0].split(', ');
+			AddBookmarks(url, title, authors, year);
+		}
+	});
 }
 
 function sciencedirectScraper(tab, url){
