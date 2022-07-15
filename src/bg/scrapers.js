@@ -100,14 +100,16 @@ function ePrintScraper(tab, url){
 		return;
 	
 	var pageUrl = url.substr(0, url.length-4);
-	getDom(pageUrl, function(dom){
-		var title = cleanSpaces(dom.getElementsByTagName('b')[0].innerText);
-		var authorsStr = cleanSpaces(dom.getElementsByTagName('i')[0].innerText);
-		var authors = authorsStr.split(" and ");
-		var year = url.split('/')[3];
+
+	metaParser(url, pageUrl, {'yearName': 'citation_publication_date'});
+	// getDom(pageUrl, function(dom){
+	// 	var title = cleanSpaces(dom.getElementsByTagName('b')[0].innerText);
+	// 	var authorsStr = cleanSpaces(dom.getElementsByTagName('i')[0].innerText);
+	// 	var authors = authorsStr.split(" and ");
+	// 	var year = url.split('/')[3];
 		
-		AddBookmarks(url, title, authors, year);
-	});
+	// 	AddBookmarks(url, title, authors, year);
+	// });
 }
 
 function arxivScraper(tab, url){
