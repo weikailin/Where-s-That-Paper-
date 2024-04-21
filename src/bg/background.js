@@ -36,6 +36,7 @@ function init(){
 	handlers['journals.aps.org'] = apsScraper;
 	handlers['drops.dagstuhl.de'] = dropsScraper;
 	handlers['core.ac.uk'] = coreScraper;
+	// handlers['iacr.org'] = iacrScraper; // hard: https://iacr.org/archive/eurocrypt2014/XXX.pdf does not have author-year info
 }
 
 
